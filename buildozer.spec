@@ -22,7 +22,7 @@ version = 2.0
 
 # کتابخانه‌های مورد نیاز
 # python-bidi روی نسخهٔ خالص پایتون (0.4.2) قفل شده تا روی اندروید بدون خطا بیلد شود
-requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2,python-docx,lxml
+requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
 
 # جهت نمایش — عمودی (موبایل)
 orientation = portrait
