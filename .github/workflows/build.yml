@@ -38,8 +38,8 @@ jobs:
             .buildozer
           key: buildozer-cache-v1
 
-      - name: ساخت APK (دیباگ)
-        run: buildozer android debug
+      - name: پذیرش مجوزها و ساخت APK (دیباگ)
+        run: yes | buildozer android debug
 
       - name: آپلود APK به عنوان خروجی
         uses: actions/upload-artifact@v4
