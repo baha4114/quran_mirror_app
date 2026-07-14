@@ -1,61 +1,58 @@
-[app]
+name: ساخت APK قطب‌نمای قرآنی
 
-# نام اپلیکیشن (روی گوشی نمایش داده می‌شود)
-title = Quran Mirror
+# این گردش‌کار هم با هر push و هم دستی اجرا می‌شود
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
 
-# نام بسته و دامنه (این‌ها را می‌توانید تغییر دهید)
-package.name = quranmirror
-package.domain = ir.parsavesta.quranmirror
+jobs:
+  build-android:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v4
 
-source.dir = .
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-# پسوندهایی که داخل اپلیکیشن گنجانده می‌شوند
-source.include_exts = py,csv,json,ttf,otf,jpg,jpeg,png,mp3,mp4,pdf,txt
+      - name: نصب وابستگی‌های سیستم
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
+            zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev \
+            build-essential ccache libltdl-dev
 
-# پوشهٔ assets به‌طور کامل داخل اپ قرار می‌گیرد (دیتا، فونت، تصویر، صدا)
-source.include_patterns = assets/*
+      - name: نصب buildozer و cython
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install buildozer==1.5.0 cython==0.29.33
 
-# پوشه‌هایی که نادیده گرفته می‌شوند
-source.exclude_dirs = tests, bin, .git, __pycache__, .buildozer
+      - name: آماده‌سازی نسخهٔ پایدار python-for-android (پایتون 3.11)
+        run: |
+          pip download --no-deps --no-binary :all: python-for-android==2024.1.21 -d /tmp/p4asrc
+          mkdir -p $HOME/p4a
+          tar -xzf /tmp/p4asrc/*.tar.gz -C $HOME/p4a --strip-components=1
+          pip install -e $HOME/p4a
 
-version = 2.0
+      - name: کش فایل‌های ساخت (برای سرعت دفعات بعد)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.buildozer
+            .buildozer
+          key: buildozer-cache-v1
 
-# کتابخانه‌های مورد نیاز
-requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
+      - name: پذیرش مجوزهای اندروید و ساخت APK (دیباگ)
+        run: |
+          set +o pipefail
+          yes | buildozer android debug
 
-# جهت نمایش — عمودی (موبایل)
-orientation = portrait
-fullscreen = 0
-
-# آیکون و اسپلش
-# icon.filename = %(source.dir)s/assets/icon.png
-presplash.filename = %(source.dir)s/assets/bg.jpg
-
-android.presplash_color = #0d1424
-
-# دسترسی‌ها (حداقلی — اپ آفلاین کار می‌کند)
-android.permissions = INTERNET
-
-# نسخه‌های API اندروید
-android.api = 34
-android.minapi = 24
-android.ndk_api = 24
-
-# نسخهٔ NDK را روی 25b قفل می‌کنیم چون نسخه‌های خیلی جدید NDK با Kivy 2.3.0 خطای کامپایل می‌دهند
-android.ndk = 25b
-
-# معماری‌های پردازنده (اکثر گوشی‌های امروزی arm64-v8a هستند)
-android.archs = arm64-v8a, armeabi-v7a
-
-android.allow_backup = 1
-
-# bootstrap پیش‌فرض برای Kivy
-p4a.bootstrap = sdl2
-
-# نسخهٔ python-for-android را روی یک ریلیز پایدار قفل می‌کنیم
-# این ریلیز پایتون 3.11 می‌سازد (نه 3.14) تا Kivy 2.3.0 درست کامپایل شود
-p4a.branch = 2024.01.21
-
-[buildozer]
-log_level = 2
-warn_on_root = 1
+      - name: آپلود APK به عنوان خروجی
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-mirror-apk
+          path: bin/*.apk
