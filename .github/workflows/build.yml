@@ -1,5 +1,6 @@
 name: ساخت APK قطب‌نمای قرآنی
 
+# این گردش‌کار هم با هر push و هم دستی اجرا می‌شود
 on:
   push:
     branches: [ main, master ]
@@ -16,6 +17,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: فعال‌سازی جاوا 17 (مورد نیاز Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: نصب وابستگی‌های سیستم
         run: |
