@@ -39,7 +39,11 @@ import core
 from rtl import rtl, rtl_multiline
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# اگر پوشهٔ assets وجود داشته باشد از آن استفاده می‌کنیم؛ وگرنه فایل‌ها را از همین پوشهٔ اصلی می‌خوانیم
+# (روی گیت‌هاب فایل‌ها در ریشه هستند، روی ویندوز داخل assets)
 ASSET_DIR = os.path.join(BASE_DIR, 'assets')
+if not os.path.isdir(ASSET_DIR):
+    ASSET_DIR = BASE_DIR
 
 
 def asset(name):
