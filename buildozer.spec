@@ -1,58 +1,37 @@
-name: ساخت APK قطب‌نمای قرآنی
+[app]
 
-# این گردش‌کار هم با هر push و هم دستی اجرا می‌شود
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+title = Quran Mirror
+package.name = quranmirror
+package.domain = ir.parsavesta.quranmirror
 
-jobs:
-  build-android:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: دریافت کد
-        uses: actions/checkout@v4
+source.dir = .
+source.include_exts = py,csv,json,ttf,otf,jpg,jpeg,png,mp3,mp4,pdf,txt
+source.include_patterns = assets/*
+source.exclude_dirs = tests, bin, .git, __pycache__, .buildozer
 
-      - name: نصب پایتون
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+version = 2.0
 
-      - name: نصب وابستگی‌های سیستم
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
-            zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev \
-            build-essential ccache libltdl-dev
+requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
 
-      - name: نصب buildozer و cython
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          pip install buildozer==1.5.0 cython==0.29.33
+orientation = portrait
+fullscreen = 0
 
-      - name: آماده‌سازی نسخهٔ پایدار python-for-android (پایتون 3.11)
-        run: |
-          pip download --no-deps --no-binary :all: python-for-android==2024.1.21 -d /tmp/p4asrc
-          mkdir -p $HOME/p4a
-          tar -xzf /tmp/p4asrc/*.tar.gz -C $HOME/p4a --strip-components=1
-          pip install -e $HOME/p4a
+presplash.filename = %(source.dir)s/assets/bg.jpg
+android.presplash_color = #0d1424
 
-      - name: کش فایل‌های ساخت (برای سرعت دفعات بعد)
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.buildozer
-            .buildozer
-          key: buildozer-cache-v1
+android.permissions = INTERNET
 
-      - name: پذیرش مجوزهای اندروید و ساخت APK (دیباگ)
-        run: |
-          set +o pipefail
-          yes | buildozer android debug
+android.api = 34
+android.minapi = 24
+android.ndk_api = 24
+android.ndk = 25b
 
-      - name: آپلود APK به عنوان خروجی
-        uses: actions/upload-artifact@v4
-        with:
-          name: quran-mirror-apk
-          path: bin/*.apk
+android.archs = arm64-v8a, armeabi-v7a
+android.allow_backup = 1
+
+p4a.bootstrap = sdl2
+p4a.source_dir = /home/runner/p4a
+
+[buildozer]
+log_level = 2
+warn_on_root = 1
