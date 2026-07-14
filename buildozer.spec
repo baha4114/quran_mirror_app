@@ -21,7 +21,6 @@ source.exclude_dirs = tests, bin, .git, __pycache__, .buildozer
 version = 2.0
 
 # کتابخانه‌های مورد نیاز
-# python-bidi روی نسخهٔ خالص پایتون (0.4.2) قفل شده تا روی اندروید بدون خطا بیلد شود
 requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
 
 # جهت نمایش — عمودی (موبایل)
@@ -30,7 +29,6 @@ fullscreen = 0
 
 # آیکون و اسپلش (در صورت تمایل جایگزین کنید)
 # icon.filename = %(source.dir)s/assets/icon.png
-# presplash.filename = %(source.dir)s/assets/bg.jpg
 presplash.filename = %(source.dir)s/assets/bg.jpg
 
 android.presplash_color = #0d1424
@@ -42,6 +40,9 @@ android.permissions = INTERNET
 android.api = 34
 android.minapi = 24
 android.ndk_api = 24
+
+# نسخهٔ NDK را روی 25b قفل می‌کنیم چون نسخه‌های خیلی جدید NDK با Kivy 2.3.0 خطای کامپایل می‌دهند
+android.ndk = 25b
 
 # معماری‌های پردازنده (اکثر گوشی‌های امروزی arm64-v8a هستند)
 android.archs = arm64-v8a, armeabi-v7a
