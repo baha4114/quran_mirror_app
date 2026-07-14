@@ -27,7 +27,7 @@ requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
 orientation = portrait
 fullscreen = 0
 
-# آیکون و اسپلش (در صورت تمایل جایگزین کنید)
+# آیکون و اسپلش
 # icon.filename = %(source.dir)s/assets/icon.png
 presplash.filename = %(source.dir)s/assets/bg.jpg
 
@@ -51,6 +51,10 @@ android.allow_backup = 1
 
 # bootstrap پیش‌فرض برای Kivy
 p4a.bootstrap = sdl2
+
+# نسخهٔ python-for-android را روی یک ریلیز پایدار قفل می‌کنیم
+# این ریلیز پایتون 3.11 می‌سازد (نه 3.14) تا Kivy 2.3.0 درست کامپایل شود
+p4a.branch = 2024.01.21
 
 [buildozer]
 log_level = 2
