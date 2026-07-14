@@ -16,7 +16,8 @@ requirements = python3,kivy==2.3.0,arabic_reshaper,python-bidi==0.4.2
 orientation = portrait
 fullscreen = 0
 
-presplash.filename = %(source.dir)s/assets/bg.jpg
+# تصویر صفحهٔ شروع — bg.jpg در ریشهٔ ریپوست (نه داخل assets)
+presplash.filename = %(source.dir)s/bg.jpg
 android.presplash_color = #0d1424
 
 android.permissions = INTERNET
